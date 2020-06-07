@@ -1,0 +1,58 @@
+import simplegui
+import random
+
+message = "India is great.."
+position = [50,50]
+height = 500
+width = 500
+color = "blue"
+size = 20
+color2 = "white"
+
+def draw(canvas):
+    global message
+    canvas.draw_text(message,position,size,color)
+ 
+def change_position():
+    global height
+    global width
+    x= random.randint(0,height)
+    y = random.randint(0,width)
+    position[0] = x
+    position[1] = y
+
+def update(text):
+    global message
+    message = text
+
+def change_color():
+    global color
+    color  = random.choice(["Red","green","white","blue","silver","aqua","gray","lime","maroon","navy","orange"])
+    
+def increase_size():
+    global size
+    size = size + 10
+
+def decrease_size():
+    global size
+    size = size - 10
+    
+def change_background():
+    global color2
+    color2  = random.choice(["Red","green","white","blue","silver","aqua","gray","lime","maroon","navy","orange"])
+    frame.set_canvas_background(color2)
+
+    
+frame = simplegui.create_frame("Screen Saver",500,500)
+frame.set_canvas_background(color2)
+
+frame.set_draw_handler(draw)
+timer = simplegui.create_timer(2000,change_position)
+frame.add_input("message",update,100)
+frame.add_button("Color",change_color,100)
+frame.add_button("Increase Size",increase_size,120)
+frame.add_button("Decrease Size",decrease_size,120)
+frame.add_button("Change Background",change_background,120)
+
+frame.start()
+timer.start()

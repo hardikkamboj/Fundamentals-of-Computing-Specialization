@@ -1,0 +1,61 @@
+import random
+import simplegui
+
+
+# stone - 0
+# paper - 1
+# scissors - 2
+score = 0
+attempt = 0
+
+def press_stone():
+    user_choice = "stone"
+    sps(user_choice)
+
+def press_paper():
+    user_choice = "paper"
+    sps(user_choice)
+    
+def press_scissors():
+    user_choice = "scissors"
+    sps(user_choice)
+   
+def name_to_number(name):
+    if name == "stone": return 0
+    elif name == "paper": return 1
+    elif name == "scissors": return 2
+    
+def number_to_name(number):
+    if number == 0: return "stone"
+    elif number == 1: return "paper"
+    elif number == 2: return "scissors"
+    
+def sps(user_choice):
+    global score
+    global attempt
+    print "The user's choice is ",user_choice
+    comp_number = random.randint(0,2)
+    comp_choice = number_to_name(comp_number)
+    print "The computer's choice is",comp_choice
+    user_number = name_to_number(user_choice)
+    diff =(user_number - comp_number)%3
+    if diff == 1: 
+        score = score +1
+        attempt = attempt + 1
+        print"Congratulations!! You Won"		      
+    elif diff == 2: 
+        print "Sorry! you lose"
+        attempt = attempt + 1
+    elif diff == 0: 
+        print "Its a tie"
+        attempt = attempt + 1
+   
+    print ""
+    if attempt == 5: 
+        print "Your score is",score,"out of",attempt
+    
+frame = simplegui.create_frame("rps",200,200)
+
+frame.add_button("Stone",press_stone)
+frame.add_button("paper",press_paper)
+frame.add_button("scissors",press_scissors)

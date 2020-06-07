@@ -1,0 +1,73 @@
+import simplegui
+
+a = 0
+b = 0
+c = 0
+d = 0
+e = 0
+time = 0
+score = 0
+attempt=0
+
+
+def tick():
+    global time
+    time = time + 1
+
+def display(canvas):
+    global time
+    global score
+    global attempt
+    message = format(time)
+    scorecard = str(score) + "/" + str(attempt)
+    canvas.draw_text(message,[30,100],50,"white")
+    canvas.draw_text(scorecard,[160,30],20,"aqua")
+    
+def format(seconds):
+    global a
+    global b
+    global c
+    global d
+    d = seconds%10
+    seconds = seconds / 10
+    c = seconds%10
+    b = seconds/10
+    a = b/6
+    b = b%6
+    e = a/10
+    a = a%10
+    return str(e) + str(a) + ":" + str(b)+ str(c) + "." + str(d)
+    
+
+def start():
+    timer.start()
+
+def stop():
+    global d
+    global score
+    global attempt
+    timer.stop()
+    if d == 0:
+        score = score + 1
+    attempt = attempt + 1
+def reset():
+    global time
+    global score
+    global attempt
+    score = 0
+    attempt = 0
+    time = 0
+    timer.stop()
+    
+    
+frame = simplegui.create_frame("timer",200,200)
+frame.set_draw_handler(display)
+frame.add_button("Start",start,100)
+frame.add_button("Stop",stop,100)
+frame.add_button("Reset",reset,100)
+
+timer = simplegui.create_timer(100,tick)
+
+
+
+frame.start()

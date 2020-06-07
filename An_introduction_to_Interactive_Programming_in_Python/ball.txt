@@ -1,0 +1,95 @@
+import simplegui
+import random
+import math
+
+height = 200
+width = 200
+radius = 5
+position = [height/2,width/2]
+point1 = [0,0]
+point2 = [0,0]
+score = 0
+
+color_ball = "red"
+def control(key):
+    if key == simplegui.KEY_MAP["up"] and position[1]>radius:
+        position[1] = position[1] - 5
+    elif key == simplegui.KEY_MAP["down"] and position[1] < height - radius:
+        position[1] = position[1] + 5 
+    elif key == simplegui.KEY_MAP["left"] and position[0]>radius:
+        position[0] = position[0] - 5
+    elif key == simplegui.KEY_MAP["right"] and position[0] < width - radius:
+        position[0] = position[0] + 5
+        
+def increase_size():
+    global radius
+    radius = radius + 5
+     
+def decrease_size():
+    global radius
+    if radius > 5:    
+        radius = radius - 5
+    
+def recentre():
+    global position
+    position[0] = height/2
+    position[1] = width/2
+    
+def change_color():
+    global color_ball
+    color_ball = random.choice(["red","aqua","fuchsia","gray","green","lime","orange","yellow"])
+    
+def game():
+    global position
+    change_line()
+    timer.start()
+    timer2.start()
+    
+def change_line():
+    global point1
+    global point2
+    point1[0] = random.randint(0,width)
+    point1[1] = random.randint(0,height)
+    point2[0] = random.randint(0,width)
+    point2[1] = random.randint(0,height)
+    
+def distance(point_a,point_b):
+    return math.sqrt( ((point_a[1] - point_b[1])**2) + ((point_a[0] - point_b[0])**2) )
+    
+def main_game():
+    global point1
+    global point2
+    global position
+    #print "the timer is running"
+    # d1 is the dist. between point1 and centre of circle
+    # d2 is the dist. between point2 and centre of cirlce
+    # d3 is the dist between point1 and point2
+    d1 = distance(point1,position)
+    d2 = distance(point2,position)
+    d3 = distance(point1,point2)
+    #print d1,d2,d3
+    # the circle will pass through the lines iff the center and point1 and poin2 are collinear
+    if int(d1 + d2) == int(d3):
+        global score
+        change_line()
+        score = score + 5
+def stop():
+    timer2.stop()
+
+def draw(canvas):
+    canvas.draw_circle(position,radius,10,color_ball,color_ball)
+    canvas.draw_line(point1,point2,2,"aqua")
+    canvas.draw_text(str(score),[140,30],30,"yellow")
+
+frame = simplegui.create_frame("ball",width,200)
+frame.set_draw_handler(draw)
+frame.set_keyup_handler(control)
+frame.add_button("Increase",increase_size,100)
+frame.add_button("Decrease",decrease_size,100)
+frame.add_button("Recentre",recentre,100)
+frame.add_button("Color",change_color,100)
+frame.add_button("Start",game,100)
+timer = simplegui.create_timer(5000,change_line)
+timer2 = simplegui.create_timer(1,main_game)
+frame.add_button("stop",stop,150)
+frame.start()

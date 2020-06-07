@@ -1,0 +1,125 @@
+import simplegui
+import random
+
+width = 600
+height = 400
+ball_radius = 20
+pad_width = 8
+pad_height = 80
+position = [width/2,height/2]
+pad1 = 160
+pad2 = 160
+velocity = [0,0]
+a = 1
+b = -1
+pad1 = 160
+pad2 = 160
+vel1 = 7
+vel2 = 7
+direction = "left"
+score1 = 0
+score2 = 0
+
+def spawn_ball(direction):
+    global position
+    global a
+    global b
+    position = [width/2,height/2]
+    if direction == "right":
+        a = 1
+    elif direction == "left":
+        a = -1
+    b = -1    
+    velocity[0] = 2
+    velocity[1] = 2
+def new_game():
+    global direction,score1,score2 
+    spawn_ball(direction)
+    score1 = 0
+    score2 = 0
+    timer.start()
+
+def draw(canvas):
+    global position, a, b, pad1, pad2, pad_width, ball_radius, direction, score1, score2
+    
+    canvas.draw_line([width/2,0],[width/2,height],1,"white")
+    canvas.draw_line([8,0],[8,height],1,"white")
+    canvas.draw_line([width-8,0], [width-8,height],1,"white")
+    
+    #this is for the control of the ball
+    position[0] = position[0] + a*velocity[0]
+    position[1] = position[1] + b*velocity[1]
+    
+    if position[1] < ball_radius or position[1] > height - ball_radius:
+        b = b*(-1)
+    if position[0] <= pad_width + ball_radius:
+        if position[1] >= pad1 and position[1] <= pad1+80:
+            a = a*(-1)
+        else:
+            direction = "right"
+            score2 = score2 + 1
+            timer.stop()
+            spawn_ball(direction)
+            
+    if position[0] >= width - ball_radius - pad_width:
+        if position[1] >= pad2 and position[1] <= pad2+80:
+            a = a*(-1)
+        else:
+            direction = "left"
+            score1 = score1 + 1
+            timer.stop()
+            spawn_ball(direction)
+
+    # upgrading the position of ball
+    canvas.draw_circle(position,ball_radius,10,"red","red")
+    
+    # upgrading the position of paddles
+    canvas.draw_polygon([[9,pad1],[8,pad1+80],[0,pad1+80],[0,pad1]],2,"white","white")
+    canvas.draw_polygon([[592,pad2],[600,pad2],[600,pad2 + 80],[592,pad2+80]],2,"white","white")
+    
+    #upgrading the score 
+    canvas.draw_text(str(score1),[250,35],30,"aqua" )
+    canvas.draw_text(str(score2),[350,35],30,"aqua")
+    
+def keydown(key):
+    global pad1,pad2, vel1, vel2
+    if key == simplegui.KEY_MAP["up"] and pad2>=0:
+        pad2 = pad2 - vel2
+    if key == simplegui.KEY_MAP["down"] and pad2<= height - pad_height:
+        pad2 = pad2 + vel2
+    if key == simplegui.KEY_MAP["w"] and pad1>=0:
+        pad1 = pad1 - vel1
+    if key == simplegui.KEY_MAP["s"] and pad1 <= height - pad_height:
+        pad1 = pad1 + vel1
+    
+def keyup(key):
+     global pad1,pad2, vel1, vel2
+     if key == simplegui.KEY_MAP["up"] and pad2>=0:
+          pad2 = pad2 - vel2
+     if key == simplegui.KEY_MAP["down"] and pad2 <= height - pad_height:
+        pad2 = pad2 + vel2
+     if key == simplegui.KEY_MAP["w"] and pad1>=0:
+        pad1 = pad1 - vel1
+     if key == simplegui.KEY_MAP["s"] and pad1 <= height - pad_height:
+        pad1 = pad1 + vel1
+        
+def speed_up():
+    global a,b
+    if a>0:
+        a = a*(1.1)
+    elif a<0:
+        a = a*(1.1)
+    if b>0:
+        b = b*(1.1)
+    elif b<0:
+        b = b*(1.1)
+
+    
+frame = simplegui.create_frame("Pong",width,height)
+frame.set_draw_handler(draw)
+frame.add_button("Restart",new_game,150)
+frame.set_keydown_handler(keydown)
+frame.set_keyup_handler(keyup)
+timer = simplegui.create_timer(1500,speed_up)
+
+frame.start()

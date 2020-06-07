@@ -1,0 +1,88 @@
+import random
+import simplegui
+
+
+# stone - 0
+# paper - 1
+# scissors - 2
+score = 0
+attempt = 0
+user_message = ""
+comp_message = ""
+result = ""
+
+
+def press_stone():
+    user_choice = "stone"
+    sps(user_choice)
+
+def press_paper():
+    user_choice = "paper"
+    sps(user_choice)
+    
+def press_scissors():
+    user_choice = "scissors"
+    sps(user_choice)
+   
+def name_to_number(name):
+    if name == "stone": return 0
+    elif name == "paper": return 1
+    elif name == "scissors": return 2
+    
+def number_to_name(number):
+    if number == 0: return "stone"
+    elif number == 1: return "paper"
+    elif number == 2: return "scissors"
+    
+def sps(user_choice):
+    global score
+    global attempt
+    global user_message
+    global comp_message
+    global scorecard
+    global result
+    print "The user's choice is ",user_choice
+    user_message = user_choice
+    comp_number = random.randint(0,2)
+    comp_choice = number_to_name(comp_number)
+    print "The computer's choice is",comp_choice
+    comp_message = comp_choice
+    user_number = name_to_number(user_choice)
+    diff =(user_number - comp_number)%3
+    if diff == 1: 
+        score = score +1
+        attempt = attempt + 1
+        result = "Congratulations!! You Won"
+        print result
+    elif diff == 2: 
+        result =  "Sorry! you lose"
+        print result
+        attempt = attempt + 1
+    elif diff == 0: 
+        result =  "Its a tie"
+        print result
+        attempt = attempt + 1
+   
+    print ""
+    if attempt == 5: 
+        print "Your score is",score,"out of",attempt
+
+def draw(canvas):
+    global user_message
+    global comp_message
+    global result
+    canvas.draw_text("Your choice",[40,80],30,"red")
+    canvas.draw_text("Comp choice",[300,80],30,"blue")
+    canvas.draw_text(user_message,[50,200],40,"red")
+    canvas.draw_text(comp_message,[300,200],40,"blue")
+    canvas.draw_text(result,[200,350],30,"aqua")
+        
+frame = simplegui.create_frame("rps",800,500)
+frame.set_canvas_background("white")
+frame.set_draw_handler(draw)
+
+frame.add_button("Stone",press_stone)
+frame.add_button("paper",press_paper)
+frame.add_button("scissors",press_scissors)
+
+frame.start()
