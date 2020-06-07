@@ -1,0 +1,78 @@
+import simplegui
+import random
+
+list1 = range(8)
+list2 = range(8)
+no_list = list1 + list2
+random.shuffle(no_list)
+exposed = [False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,]
+state = 0
+first_card = 0
+second_card = 0
+no_of_turns = 0
+
+def new_game():
+    global no_list,no_of_turns,label
+    for i in range(16):
+        exposed[i] = False
+    state = 0
+    first_card = 0
+    second_card = 0
+    no_of_turns = 0
+    
+def click(position):
+    global exposed,state,no_list,first_card,second_card,no_of_turns
+    
+    pos = list(position)
+    no = pos[0] // 50
+    go = False
+    if exposed[no] == False:
+        exposed[no] = True
+        go = True
+        no_of_turns = no_of_turns + 1
+    label.set_text("No of turns = " + str(no_of_turns))
+    if go:
+        if state == 0 :
+            first_card = no
+            state = 1
+        
+        elif state == 1 :
+            second_card = no
+            state = 2
+        
+        else:
+            if no_list[first_card] == no_list[second_card]:
+                first_card = no
+                state = 1
+            elif no_list[first_card] != no_list[second_card]:
+                exposed[first_card] = False
+                exposed[second_card] = False
+                first_card = no
+                state = 1
+    
+def draw(canvas):
+    global no_list,exposed,no_of_turns
+    label.set_text("No of turns = " + str(no_of_turns))
+   
+    color = "green"
+    a = 10
+    for no in range(16):
+        color = "green"
+        if exposed[no] == True:
+            color = "white"
+        canvas.draw_polygon([[a-10,0],[a+40,0],[a+40,100],[a-10,100]],2,"black",color)
+        if exposed[no] == True:    
+            canvas.draw_text(str(no_list[no]),[a,80],80,"red")
+        a = a + 50
+     
+    
+new_game()
+
+
+        
+frame = simplegui.create_frame("memory",800,100)
+label =  frame.add_label("No of turns = " + str(no_of_turns))
+frame.set_draw_handler(draw)
+frame.set_mouseclick_handler(click)
+frame.add_button("Restart",new_game)
+frame.start()

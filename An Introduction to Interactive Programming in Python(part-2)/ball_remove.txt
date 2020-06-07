@@ -1,0 +1,35 @@
+import simplegui
+import math
+
+ball_list = []
+radius = 10
+
+def distance(p,q):
+    return math.sqrt((p[0] - q[0])**2 + (p[1] - q[1])**2)
+
+def click(position):
+    global ball_list
+    pos = list(position)
+    remove = []
+    
+    for ball in ball_list:
+        if distance(ball,pos)<radius:
+            remove.append(ball) 
+           
+    if remove == []:
+        ball_list.append(pos)
+    else:    
+        for ball in remove:
+            ball_list.pop(ball_list.index(ball))
+        
+def draw(canvas):
+    global ball_list
+    
+    for ball in ball_list:
+        canvas.draw_circle(ball,radius,5,"red","red")
+
+frame = simplegui.create_frame("ball",200,200)
+frame.set_draw_handler(draw)
+frame.set_mouseclick_handler(click)
+
+frame.start()
