@@ -1,0 +1,25 @@
+def merge(line):
+    """
+    Function that merges a single row or column in 2048.
+    """
+    without_zero = []
+    for index in range(len(line)):
+        if line[index] != 0:
+            without_zero.append(line[index])
+    answer = []
+    while len(without_zero) != 0:
+        if len(without_zero) == 1:
+            answer.append(without_zero[0])
+            without_zero.pop()
+        elif without_zero[0] == without_zero[1]:
+            answer.append(without_zero[0]*2)
+            without_zero.pop(1)
+            without_zero.pop(0)
+        else:
+            answer.append(without_zero[0])
+            without_zero.pop(0)
+    for index in range(len(answer),len(line)):
+        answer.append(0)
+            
+    return answer
+

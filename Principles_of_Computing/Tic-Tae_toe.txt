@@ -1,0 +1,106 @@
+"""
+Building a tic tae toe for machine player
+"""
+# Tic Tac Toe - Monte carlo method
+
+import random
+import poc_ttt_gui
+import poc_ttt_provided as provided
+
+
+# Constants for Monte Carlo simulator
+# You may change the values of these constants as desired, but
+#  do not change their names.
+NTRIALS = 1         # Number of trials to run
+SCORE_CURRENT = 1.0 # Score for squares played by the current player
+SCORE_OTHER = 1.0   # Score for squares played by the other player
+
+#EMPTY = 1
+#PLAYERX = 2
+#PLAYERO = 3
+
+def mc_trial(board,player):
+    """
+    Takes board and current player, and calculates
+    the end state of the board.
+    """
+    current_empty_squares = board.get_empty_squares()
+    while current_empty_squares:
+        square = random.choice(current_empty_squares)
+        board.move(square[0],square[1],player)
+        current_empty_squares.remove(square)
+        if board.check_win():
+            break
+        player = provided.switch_player(player)
+    
+def mc_update_scores(scores,board,player):
+    """
+    Takes the end state of the boaed and updates score
+    """
+    if board.check_win() != provided.DRAW:
+        temp = scores
+        player_win = (player == board.check_win())
+        winner = player
+        looser = 6/player
+        if not player_win:
+            winner,looser = looser,winner
+        if winner == player:
+            add,sub = SCORE_CURRENT,SCORE_OTHER
+        else:
+            add,sub = SCORE_OTHER,SCORE_CURRENT
+            
+            
+        for row in range(3):
+            for col in range(3):
+                if board.square(row,col) == winner:
+                    temp[row][col] += add
+                elif board.square(row,col) == looser:
+                    temp[row][col] -= sub
+                scores[row][col] = temp[row][col]
+
+def get_best_move(board,score):
+    """
+    given a board state and score it gives as output a tuple of row
+    and col 
+    """
+    empty_squares = board.get_empty_squares()
+    max_value = max_value_score(empty_squares,score)
+    max_list = []
+    for square in empty_squares:
+        if score[square[0]][square[1]] == max_value:
+            max_list.append(square)
+    best_move = random.choice(max_list)
+    return best_move
+
+def max_value_score(empty_squares,score):
+    """
+    Helper function used in get_best_move
+    returns the max value in score for empty squares
+    """
+    answer = 0
+    for square in empty_squares:
+        if score[square[0]][square[1]] > answer:
+            answer = score[square[0]][square[1]]
+    return answer
+
+
+def mc_move(board, player, trails):
+    """
+    it takes all the helper functions, and takes input
+    the current board state, and returns the best move
+    """
+    temp = board.clone()
+    score = [[0]*3 for _ in range(3)]
+    
+    for dummy in range(trails):
+        mc_trial(temp,player)
+        mc_update_scores(score,board,player)
+        
+    return get_best_move(board, score)    
+
+
+#provided.play_game(mc_move, NTRIALS, False)        
+#poc_ttt_gui.run_gui(3, provided.PLAYERX, mc_move, NTRIALS, False)
+
+
+        

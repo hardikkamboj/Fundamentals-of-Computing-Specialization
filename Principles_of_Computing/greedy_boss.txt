@@ -1,0 +1,31 @@
+def get_inc_day(savings,salary_pm,bribe):
+    import math
+    day = (bribe - savings) / float(salary_pm)
+    day = int(math.ceil(day))
+    new_savings = (salary_pm*day+savings) - bribe
+    return day,new_savings
+
+def greedy_boss(days_in_stimulation,bribe_cost_increament,plot_type):
+    day = 0
+    savings = 0
+    total = 0
+    bribe = 1000
+    salary_pm = 100
+    while day <= days_in_stimulation:
+        day_inc,savings = get_inc_day(savings, salary_pm,bribe)
+        day += day_inc
+        if day > days_in_stimulation:
+            break
+        total += day_inc*(salary_pm)
+        salary_pm+= 100
+        #print "day inc is " + str(day_inc)  
+        print "total day " + str(day)
+        bribe+= bribe_cost_increament
+        print (day,total)
+        
+        
+        
+greedy_boss(35,100,2)        
+#print get_inc_day(100,300,1200)   
+    
+    
